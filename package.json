@@ -1,0 +1,11 @@
+{
+  "name": "f-tools",
+  "version": "1.0.0",
+  "description": "Essential tools for functional programming in JavaScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "seven-deuce",
+  "license": "ISC"
+}
