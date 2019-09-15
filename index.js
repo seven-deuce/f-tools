@@ -37,13 +37,25 @@ Number.prototype.pipe = function() {
 Object.prototype.pipe = function() {
 	const before = this //an object
 	const next = arguments[0] // a function
-	console.log(`before: ${before}, next: ${next}`)
 	if (typeof next !== "function") throw new Error("The argument given to pipe() must be a function")
+	if(before instanceof Set ) return [...before].pipe(next)	
+	else if(before instanceof Map ) return mapToObject(before).pipe(next)
 	return next(before)
 }
 
-f.pipe = function() {
-	const args = [...arguments]
+function mapToObject(map) {
+	const obj = {}
+	map.forEach((value, key) => {
+		const entry = {}
+		entry[key] = value
+		Object.assign(obj, entry)
+	})
+	return obj
+}
+
+f.pipe = function() { console.log("here are: " , arguments)
+	const args = (arguments instanceof Array) ?  [...arguments] : [...arguments]
+
 	if (typeof args[0] === "function") {
 		return function() {
 			let fn = args[0].apply(undefined, arguments)
@@ -68,7 +80,6 @@ f.identity = function(fn) {
 
 f.curry = function(fn) {
 	const length = fn.length
-	console.log(length)
 	switch (length) {
 		case 0:
 			return fn

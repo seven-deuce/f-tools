@@ -1,11 +1,27 @@
 {
   "name": "f-tools",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Essential tools for functional programming in JavaScript",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "seven-deuce",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seven-deuce/f-tools.git"
+  },
+  "keywords": [
+    "functional",
+    "programing",
+    "javascript",
+    "pipe",
+    "curry",
+    "memoize"
+  ],
+  "bugs": {
+    "url": "https://github.com/seven-deuce/f-tools/issues"
+  },
+  "homepage": "https://github.com/seven-deuce/f-tools#readme"
 }
