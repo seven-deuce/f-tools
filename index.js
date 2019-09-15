@@ -66,7 +66,9 @@ function flatten(array) {
 
 f.pipe = function() {
 
-	const args = (arguments[0] instanceof Array) ?  flatten([...arguments]) : [...arguments]
+
+	let args = [...arguments]
+if(arguments.length === 1 && arguments[0] instanceof Array ) args =  flatten([...arguments])
 
 	if (typeof args[0] === "function") {
 		return function() {
@@ -86,8 +88,11 @@ f.pipe = function() {
 	}
 }
 
-f.identity = function(fn) {
-	return [...arguments]
+f.identity = function() {
+	const args = [...arguments] 
+	if(args.length === 1 && args[0] instanceof Array) return args[0]
+		else return args
+	
 }
 
 f.curry = function(fn) {
