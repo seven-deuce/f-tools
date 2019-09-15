@@ -53,8 +53,20 @@ function mapToObject(map) {
 	return obj
 }
 
-f.pipe = function() { console.log("here are: " , arguments)
-	const args = (arguments instanceof Array) ?  [...arguments] : [...arguments]
+function flatten(array) {
+  var flattend = [];
+  (function flat(array) {
+    array.forEach(function(el) {
+      if (Array.isArray(el)) flat(el);
+      else flattend.push(el);
+    });
+  })(array);
+  return flattend;
+}
+
+f.pipe = function() {
+
+	const args = (arguments[0] instanceof Array) ?  flatten([...arguments]) : [...arguments]
 
 	if (typeof args[0] === "function") {
 		return function() {

@@ -21,8 +21,8 @@ const test = string
 	.pipe(reduce) // 6
 console.log(test) // 6
 ```
-
-## .pipe()
+## API
+### .pipe()
 `firstValue.pipe(function)`
 
 You can pipe any data-type to another data-type with .pipe() method, provided that:
@@ -68,7 +68,8 @@ const third = second => `${second} and loves pizza`
 
 const example3 = first.pipe(second).pipe(third)
 console.log(example3("Alex", "boy")) // Alex is a boy and he plays football and loves pizza
-// in example3, we are doing lazy evaluation, because the functions will be chained but not called, until we invoke them with arguments
+// in example3, we are doing lazy evaluation, because the functions 
+// will be chained but not called, until we invoke them with arguments
 
 
 //A Set will be converted to an array
@@ -82,3 +83,7 @@ const map = new Map([["firstName", "Marlon"], ["lastName", "Brando"]])
 const example5 = map.pipe(getValues)
 console.log(example5) // ["Marlon", "Brando"]
 ```
+
+### f.pipe()
+`f.pipe(function1 , function2, function3 , ...) 
+OR: f.pipe([function1 , function2, function3 , ...])`
