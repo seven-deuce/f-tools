@@ -26,9 +26,9 @@ console.log(test) // 6
 `firstValue.pipe(function)`
 
 You can pipe any data-type to another data-type with .pipe() method, provided that:
-* The `firstValue` cannot be `null` or `undefined`. If you need to pass these values, use `f.pipe` method, explained here.
+* The `firstValue` cannot be `null` or `undefined`. If you need to pass these values, use `f.pipe` method, [explained here](https://github.com/seven-deuce/f-tools/blob/master/README.md#fpipe).
 * The `firstValue` will be passed into the function that you pass to `.pip()`. This function, must be a **unary function**. A unary function accepts only one argument and always returns a value.
-* for all practical reasons, javascript `Set` will be converted to `Array` and `Map` to `Object`. If you want to perserve the Set and Map datatype during this process, use `f.pipe` method, explained here. 
+* for all practical reasons, javascript `Set` will be converted to `Array` and `Map` to `Object`. If you want to perserve the Set and Map datatype during this process, use `f.pipe` method, [explained here](https://github.com/seven-deuce/f-tools/blob/master/README.md#fpipe). 
 
 See examples below which use `.pipe()` to write declarative code:
 
