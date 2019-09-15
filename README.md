@@ -100,7 +100,7 @@ console.log(test) // ["one", 2, "3"]
 `f.pipe(function1 , function2, function3 , ...) 
 /* OR: */ f.pipe([function1 , function2, function3 , ...])`
 
-* You can pass as many functions as you want to `f.pipe()`, or, pass an array that includes functions only. It will call each subsequent function with return value of the previous one.
+* You can pass as many functions as you want to `f.pipe()`, or, pass an array that includes functions only. It will call each subsequent function with returned value of the previous one.
 * The first argument (function1) could be any other value as well, like a string or array. If you do that, the subsequent functions will be called immediately with that value and the result will be returned.
 * If the first argument (function1) would be a function, it can have any number of arguments.
 * All the subsequent functions (function2, function3, ....) must be of unary type: they can take only one parameter, and must return something.
