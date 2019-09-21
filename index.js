@@ -38,9 +38,66 @@ Object.prototype.pipe = function() {
 	const before = this //an object
 	const next = arguments[0] // a function
 	if (typeof next !== "function") throw new Error("The argument given to pipe() must be a function")
-	if(before instanceof Set ) return [...before].pipe(next)	
-	else if(before instanceof Map ) return mapToObject(before).pipe(next)
+	if (before instanceof Set) return [...before].pipe(next)
+	else if (before instanceof Map) return mapToObject(before).pipe(next)
 	return next(before)
+}
+
+Object.prototype.get = function() {
+	const object = Object.assign({}, this)
+	const args = [...arguments]
+	let path = args[0]
+	const undefinedValue = (args[1] === undefined) ?  undefined : args[1]
+	if (!path) return new Error(".get() needs a single parameter that could be a String or Array")
+	if (typeof path !== "string" && !Array.isArray(path))
+		return new Error("The parameter supplied as the first argument to .get() must be an Array or a String")
+	if (typeof path === "string") {
+		path = path.split(/\[|\]/g) // now an array
+
+		path = path.reduce((a, item) => {
+			item = item.replace(/^[\.'"]/, "").replace(/[\.'"]$/, "")
+			item = /^\w+\.\d+$/.test(item) ? [item] : item.split(".")
+
+			return item[0] !== "" ? a.concat(item) : a
+		}, [])
+	}
+
+	function search(path, input = object) {
+		if (input[path[0]] === undefined) return undefinedValue
+		else if (path.length === 1 && input[path[0]]) return input[path[0]]
+
+		input = input[path[0]]
+		return search(path.slice(1), input)
+	}
+	return search(path)
+}
+
+Array.prototype.get = function() {
+	const object = [...this]
+	const args = [...arguments]
+	let path = args[0]
+	const undefinedValue = args[1] || undefined
+	if (!path) return new Error(".get() needs a single parameter that could be a String or Array")
+	if (typeof path !== "string" && !Array.isArray(path))
+		return new Error("The parameter supplied as the first argument to .get() must be an Array or a String")
+	if (typeof path === "string") {
+		path = path.split(/\[|\]/g) // now an array
+		path = path.reduce((a, item) => {
+			item = item.replace(/^[\.'"]/, "").replace(/[\.'"]$/, "")
+			item = /^\w+\.\d+$/.test(item) ? [item] : item.split(".")
+
+			return item[0] !== "" ? a.concat(item) : a
+		}, [])
+	}
+
+	function search(path, input = object) {
+		if (input[path[0]] === undefined) return undefinedValue
+		else if (path.length === 1 && input[path[0]]) return input[path[0]]
+
+		input = input[path[0]]
+		return search(path.slice(1), input)
+	}
+	return search(path)
 }
 
 function mapToObject(map) {
@@ -53,22 +110,21 @@ function mapToObject(map) {
 	return obj
 }
 
-function flatten(array) {
-  var flattend = [];
-  (function flat(array) {
-    array.forEach(function(el) {
-      if (Array.isArray(el)) flat(el);
-      else flattend.push(el);
-    });
-  })(array);
-  return flattend;
+f.flatten = function(array) {
+	if (!Array.isArray(array)) return array
+	var flattend = []
+	;(function flat(array) {
+		array.forEach(function(el) {
+			if (Array.isArray(el)) flat(el)
+			else flattend.push(el)
+		})
+	})(array)
+	return flattend
 }
 
 f.pipe = function() {
-
-
 	let args = [...arguments]
-if(arguments.length === 1 && arguments[0] instanceof Array ) args =  flatten([...arguments])
+	if (arguments.length === 1 && arguments[0] instanceof Array) args = f.flatten([...arguments])
 
 	if (typeof args[0] === "function") {
 		return function() {
@@ -78,47 +134,33 @@ if(arguments.length === 1 && arguments[0] instanceof Array ) args =  flatten([..
 			}
 			return fn
 		}
-	}
-	else {
+	} else {
 		let result = args[0]
-		for(let i = 1; i < args.length; i++) {
-		    result = args[i](result)
-		  }
-		  return result
+		for (let i = 1; i < args.length; i++) {
+			result = args[i](result)
+		}
+		return result
 	}
 }
 
 f.identity = function() {
-	const args = [...arguments] 
-	if(args.length === 1 && args[0] instanceof Array) return args[0]
-		else return args
-	
+	const args = [...arguments]
+	if (args.length === 1 && args[0] instanceof Array) return args[0]
+	else return args
 }
 
 f.curry = function(fn) {
-	const length = fn.length
-	switch (length) {
-		case 0:
-			return fn
-		case 1:
-			return fn
-		case 2:
-			return a1 => a2 => fn.apply(this, [a1, a2])
-		case 3:
-			return a1 => a2 => a3 => fn.apply(this, [a1, a2, a3, a4])
-		case 4:
-			return a1 => a2 => a3 => a4 => fn.apply(this, [a1, a2, a3, a4])
-		case 5:
-			return a1 => a2 => a3 => a4 => a5 => fn.apply(this, [a1, a2, a3, a4, a5])
-		case 6:
-			return a1 => a2 => a3 => a4 => a5 => a6 => fn.apply(this, [a1, a2, a3, a4, a5, a6])
-		case 7:
-			return a1 => a2 => a3 => a4 => a5 => a6 => a7 => fn.apply(this, [a1, a2, a3, a4, a5, a6, a7])
-
-		default:
-			throw new Error(
-				'The function that you are passing to the "curry" method may take up to 7 parameters. Restructure your function and lower the parameters passed into it'
-			)
+	if (fn.length < 2) return fn
+	const curry = {}
+	curry.args = []
+	curry.length = fn.length
+	return function waitingForNextArgument() {
+		curry.args = Array.from(arguments)
+		if (curry.args.length >= curry.length) {
+			return fn.apply(undefined, curry.args)
+		} else {
+			return waitingForNextArgument.bind(undefined, ...curry.args)
+		}
 	}
 }
 
