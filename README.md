@@ -1,4 +1,7 @@
-# f-tools => essential tools for functional programming in JavaScript
+<img src="/logo.jpg" />
+
+# f-tools => essential tools for functional programming in JavaScript 
+
 
 This small library will provide you with methods that are required for functional programming, but are not natively supported in JavaScript.
 
