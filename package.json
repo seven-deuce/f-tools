@@ -21,7 +21,15 @@
     "javascript",
     "pipe",
     "curry",
-    "memoize"
+    "memoize",
+    "function",
+    "utils",
+    "utilities",
+    "toolkit",
+    "fp",
+    "point-free",
+    "curried",
+    "pure"
   ],
   "bugs": {
     "url": "https://github.com/seven-deuce/f-tools/issues"
