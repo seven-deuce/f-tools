@@ -7,6 +7,7 @@ This small library will provide you with methods that are required for functiona
 
 ### Browser
 `<script src="https://unpkg.com/f-tools@latest/umd/f-tools.min.js"></script>`
+
 All methods will be available on  `f` object, on `window` . You can see them all by trying `console.log(f)`
 
 ## Basic usage 
@@ -171,8 +172,11 @@ console.log(example5) //true
 ```
 
 ### f.curry(function)
+`f.curry(function)`
 
-* `f.curry()` takes a function as its argument, and returns a a version of that which is curried. For calling this curried function, you can provide arguments, one at a time, or in any other grouping. When the last argument is supplied, the value will be returned, otherwise, it is going to return a function which expects the next argument.
+`f.curry()` takes a function as its argument, and returns a a version of that which is curried. For calling this curried function, you can provide arguments, one at a time, or in any other grouping. 
+
+When the last argument is supplied, the value will be returned, otherwise, it is going to return a function which expects the next argument.
 
 ```
 const f = require("f-tools")
@@ -253,7 +257,7 @@ console.log(doMath._cache) // undefined
 
 `[ Function ].memoize()`
 
-* Has the same functionality of `f.memoizeX(function)`, but you can easily call it on any function and will memoize it for you.
+Has the same functionality of `f.memoizeX(function)`, but you can easily call it on any function and will memoize it for you.
 
 ```
 const f = require("f-tools")
@@ -269,10 +273,11 @@ console.log(doMath_memoized(10101010 , 7)) //1.1946385770936731e+60
 
 ### .get()
 
-`{ Object }.get( key , undefinedValue )`
+`{ Object }.get( key , undefinedValue )` OR: 
 `[ Array ].get( key, undefinedValue )`
 
 Sometime you need to traverse a deeply nested object or array. If the value that you are looking does not exist in that object/array, you will get `undefined` normally. But if before reaching the last key, any previous key wouldn't exist, then JavaScript will throw an error.
+
 By using `.get()` method for getting your value, you will avoid this error. `.get()` will look for the value that you specified. If it finds it, it will return it, otherwise it will just return `undefined`.
 
 * `key` could be a string or array.
@@ -282,13 +287,13 @@ By using `.get()` method for getting your value, you will avoid this error. `.ge
 const f = require("f-tools")
 
 const array = [
-						{ a: 1 }, 
-						{ b: 2 }, 
-						[
-							{ c: { d: 3 } 
-							}
-						]
-					]
+	{ a: 1 }, 
+	{ b: 2 }, 
+	[
+		{ c: { d: 3 } 
+		}
+	]
+]
 console.log(array[2][0].c.d) // 3
 console.log(array.get("[2][0].c.d")) // 3
 //or:
@@ -308,14 +313,14 @@ console.log(array.get("[2][1].c.d", "Cannot find it!")) // Cannot find it!
 
 
 const object = {
-						a: [
-								{
-									"a.0": {
-										b: 17
-									}
-								}
-							]
-						}
+	a: [
+			{
+				"a.0": {
+					b: 17
+				}
+			}
+		]
+	}
 console.log(object.a[0]["a.0"].b) // 17
 console.log(object.get("a[0]['a.0'].b" )) //17
 
