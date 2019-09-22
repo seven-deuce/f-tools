@@ -203,4 +203,4 @@ Function.prototype.memoize = function() {
 	}
 }
 
-module.exports = f
+module.exports = Object.freeze ? Object.freeze(f) : f
