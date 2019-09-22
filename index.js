@@ -3,7 +3,7 @@ const f = {}
 Function.prototype.pipe = function() {
 	const before = this
 	const next = arguments[0]
-	if (typeof next !== "function") throw new Error("The argument given to pipe() must be a function")
+	if (typeof next !== "function") return new Error("The argument given to pipe() must be a function")
 
 	const _placeHolder = Array.from({ length: before.length })
 
@@ -16,41 +16,41 @@ Function.prototype.pipe = function() {
 Array.prototype.pipe = function() {
 	const before = this //an array
 	const next = arguments[0] // a function
-	if (typeof next !== "function") throw new Error("The argument given to pipe() must be a function")
+	if (typeof next !== "function") return new Error("The argument given to pipe() must be a function")
 	return next(before)
 }
 
 String.prototype.pipe = function() {
 	const before = this //a string
 	const next = arguments[0] // a function
-	if (typeof next !== "function") throw new Error("The argument given to pipe() must be a function")
+	if (typeof next !== "function") return new Error("The argument given to pipe() must be a function")
 	return next(before)
 }
 
 Number.prototype.pipe = function() {
 	const before = this //a number
 	const next = arguments[0] // a function
-	if (typeof next !== "function") throw new Error("The argument given to pipe() must be a function")
+	if (typeof next !== "function") return new Error("The argument given to pipe() must be a function")
 	return next(before)
 }
 
 Object.prototype.pipe = function() {
 	const before = this //an object
 	const next = arguments[0] // a function
-	if (typeof next !== "function") throw new Error("The argument given to pipe() must be a function")
+	if (typeof next !== "function") return new Error("The argument given to pipe() must be a function")
 	if (before instanceof Set) return [...before].pipe(next)
 	else if (before instanceof Map) return mapToObject(before).pipe(next)
 	return next(before)
 }
 
-Object.prototype.get = function() {
+Object.prototype.read = function() {
 	const object = Object.assign({}, this)
 	const args = [...arguments]
 	let path = args[0]
 	const undefinedValue = (args[1] === undefined) ?  undefined : args[1]
-	if (!path) return new Error(".get() needs a single parameter that could be a String or Array")
+	if (!path) return new Error(".read() needs a single parameter that could be a String or Array")
 	if (typeof path !== "string" && !Array.isArray(path))
-		return new Error("The parameter supplied as the first argument to .get() must be an Array or a String")
+		return new Error("The parameter supplied as the first argument to .read() must be an Array or a String")
 	if (typeof path === "string") {
 		path = path.split(/\[|\]/g) // now an array
 
@@ -72,14 +72,14 @@ Object.prototype.get = function() {
 	return search(path)
 }
 
-Array.prototype.get = function() {
+Array.prototype.read = function() {
 	const object = [...this]
 	const args = [...arguments]
 	let path = args[0]
 	const undefinedValue = args[1] || undefined
-	if (!path) return new Error(".get() needs a single parameter that could be a String or Array")
+	if (!path) return new Error(".read() needs a single parameter that could be a String or Array")
 	if (typeof path !== "string" && !Array.isArray(path))
-		return new Error("The parameter supplied as the first argument to .get() must be an Array or a String")
+		return new Error("The parameter supplied as the first argument to .read() must be an Array or a String")
 	if (typeof path === "string") {
 		path = path.split(/\[|\]/g) // now an array
 		path = path.reduce((a, item) => {
@@ -98,6 +98,11 @@ Array.prototype.get = function() {
 		return search(path.slice(1), input)
 	}
 	return search(path)
+}
+
+f.read =  function(data , path, undefinedValue) {
+	if(Array.isArray(data) || typeof data === "object") return data.read(path, undefinedValue)
+		else return new Error("The first argument for f.read() must be an array or object.")
 }
 
 function mapToObject(map) {
@@ -124,7 +129,7 @@ f.flatten = function(array) {
 
 f.pipe = function() {
 	let args = [...arguments]
-	if (arguments.length === 1 && arguments[0] instanceof Array) args = f.flatten([...arguments])
+	if (args.length === 1 &&  Array.isArray(args[0])) args = f.flatten([...arguments])
 
 	if (typeof args[0] === "function") {
 		return function() {
@@ -145,11 +150,12 @@ f.pipe = function() {
 
 f.identity = function() {
 	const args = [...arguments]
-	if (args.length === 1 && args[0] instanceof Array) return args[0]
+	if (args.length === 1 && Array.isArray(args[0])) return args[0]
 	else return args
 }
 
 f.curry = function(fn) {
+	if(typeof fn !== "function") return new Error("The argument passed to f.curry() must be a function.")
 	if (fn.length < 2) return fn
 	const curry = {}
 	curry.args = []
@@ -165,6 +171,7 @@ f.curry = function(fn) {
 }
 
 f.memoize = function(fn) {
+	if(typeof fn !== "function") return new Error("The argument passed to f.memoize() must be a function.")
 	if (!fn._cache) fn._cache = {}
 
 	return function(arg) {
@@ -175,6 +182,7 @@ f.memoize = function(fn) {
 }
 
 f.memoizeX = function(fn) {
+	if(typeof fn !== "function") return new Error("The argument passed to f.memoizeX() must be a function.")
 	const cache = {}
 	return function() {
 		const key = [...arguments].join("#%&@^#")

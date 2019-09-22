@@ -274,14 +274,14 @@ console.log(doMath_memoized(10101010 , 7)) //1.1946385770936731e+60
 
 ## Other Useful API
 
-### .get()
+### .read()
 
-`{ Object }.get( key , undefinedValue )` OR: 
-`[ Array ].get( key, undefinedValue )`
+`{ Object }.read( key , undefinedValue )` OR: 
+`[ Array ].read( key, undefinedValue )`
 
 Sometime you need to traverse a deeply nested object or array. If the value that you are looking does not exist in that object/array, you will get `undefined` normally. But if before reaching the last key, any previous key wouldn't exist, then JavaScript will throw an error.
 
-By using `.get()` method for getting your value, you will avoid this error. `.get()` will look for the value that you specified. If it finds it, it will return it, otherwise it will just return `undefined`.
+By using `.read()` method for getting your value, you will avoid this error. `.read()` will look for the value that you specified. If it finds it, it will return it, otherwise it will just return `undefined`.
 
 * `key` could be a string or array.
 * If you prefer another value to be returned in case of failure, you can pass it as the second value to it (`undefinedValue`).
@@ -298,21 +298,21 @@ const array = [
 	]
 ]
 console.log(array[2][0].c.d) // 3
-console.log(array.get("[2][0].c.d")) // 3
+console.log(array.read("[2][0].c.d")) // 3
 //or:
-console.log(array.get([ 2, 0 , "c" , "d" ])) // 3
+console.log(array.read([ 2, 0 , "c" , "d" ])) // 3
 
 // in JS, if the value that you are looking for does not
 // exist, it will throw an error:
 console.log(array[2][1].c.d) // TypeError: Cannot read property 'c' of undefined
 
-// using the .get(), whenever a value could not be found
+// using the .read(), whenever a value could not be found
 // it will immediately return undefined and will not throw an error:
-console.log(array.get("[2][1].c.d")) // undefined
+console.log(array.read("[2][1].c.d")) // undefined
 
-// If you want .get() to return any other value instead of "undefined"
+// If you want .read() to return any other value instead of "undefined"
 // you can pass it as the second argument:
-console.log(array.get("[2][1].c.d", "Cannot find it!")) // Cannot find it!
+console.log(array.read("[2][1].c.d", "Cannot find it!")) // Cannot find it!
 
 
 const object = {
@@ -325,10 +325,10 @@ const object = {
 		]
 	}
 console.log(object.a[0]["a.0"].b) // 17
-console.log(object.get("a[0]['a.0'].b" )) //17
+console.log(object.read("a[0]['a.0'].b" )) //17
 
-console.log(object.get("a[0]['a.0']" )) // { b: 17 }
-console.log(object.get("a[0][1].b" )) //undefined
+console.log(object.read("a[0]['a.0']" )) // { b: 17 }
+console.log(object.read("a[0][1].b" )) //undefined
 
-console.log(object.get("a[0][1].b" , null)) // null
+console.log(object.read("a[0][1].b" , null)) // null
 ```
