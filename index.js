@@ -43,14 +43,14 @@ Object.prototype.pipe = function() {
 	return next(before)
 }
 
-Object.prototype.read = function() {
+Object.prototype.reach = function() {
 	const object = Object.assign({}, this)
 	const args = [...arguments]
 	let path = args[0]
 	const undefinedValue = (args[1] === undefined) ?  undefined : args[1]
-	if (!path) return new Error(".read() needs a single parameter that could be a String or Array")
+	if (!path) return new Error(".reach() needs a single parameter that could be a String or Array")
 	if (typeof path !== "string" && !Array.isArray(path))
-		return new Error("The parameter supplied as the first argument to .read() must be an Array or a String")
+		return new Error("The parameter supplied as the first argument to .reach() must be an Array or a String")
 	if (typeof path === "string") {
 		path = path.split(/\[|\]/g) // now an array
 
@@ -72,14 +72,14 @@ Object.prototype.read = function() {
 	return search(path)
 }
 
-Array.prototype.read = function() {
+Array.prototype.reach = function() {
 	const object = [...this]
 	const args = [...arguments]
 	let path = args[0]
 	const undefinedValue = args[1] || undefined
-	if (!path) return new Error(".read() needs a single parameter that could be a String or Array")
+	if (!path) return new Error(".reach() needs a single parameter that could be a String or Array")
 	if (typeof path !== "string" && !Array.isArray(path))
-		return new Error("The parameter supplied as the first argument to .read() must be an Array or a String")
+		return new Error("The parameter supplied as the first argument to .reach() must be an Array or a String")
 	if (typeof path === "string") {
 		path = path.split(/\[|\]/g) // now an array
 		path = path.reduce((a, item) => {
@@ -100,9 +100,9 @@ Array.prototype.read = function() {
 	return search(path)
 }
 
-f.read =  function(data , path, undefinedValue) {
-	if(Array.isArray(data) || typeof data === "object") return data.read(path, undefinedValue)
-		else return new Error("The first argument for f.read() must be an array or object.")
+f.reach =  function(data , path, undefinedValue) {
+	if(Array.isArray(data) || typeof data === "object") return data.reach(path, undefinedValue)
+		else return new Error("The first argument for f.reach() must be an array or object.")
 }
 
 function mapToObject(map) {
