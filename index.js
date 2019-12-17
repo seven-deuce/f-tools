@@ -64,7 +64,7 @@ Object.prototype.reach = function() {
 
 	function search(path, input = object) {
 		if (input[path[0]] === undefined) return undefinedValue
-		else if (path.length === 1 && input[path[0]]) return input[path[0]]
+		else if (path.length === 1 && input[path[0]] !== undefined) return input[path[0]]
 
 		input = input[path[0]]
 		return search(path.slice(1), input)
@@ -92,7 +92,7 @@ Array.prototype.reach = function() {
 
 	function search(path, input = object) {
 		if (input[path[0]] === undefined) return undefinedValue
-		else if (path.length === 1 && input[path[0]]) return input[path[0]]
+		else if (path.length === 1 && input[path[0]]  !== undefined) return input[path[0]]
 
 		input = input[path[0]]
 		return search(path.slice(1), input)
