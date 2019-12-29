@@ -1,53 +1,10 @@
 const f = {}
 
-Function.prototype.pipe = function() {
-	const before = this
-	const next = arguments[0]
-	if (typeof next !== "function") return new Error("The argument given to pipe() must be a function")
-
-	const _placeHolder = Array.from({ length: before.length })
-
-	return function(..._placeHolder) {
-		const call = before.apply(undefined, arguments)
-		return next(call)
-	}
-}
-
-Array.prototype.pipe = function() {
-	const before = this //an array
-	const next = arguments[0] // a function
-	if (typeof next !== "function") return new Error("The argument given to pipe() must be a function")
-	return next(before)
-}
-
-String.prototype.pipe = function() {
-	const before = this //a string
-	const next = arguments[0] // a function
-	if (typeof next !== "function") return new Error("The argument given to pipe() must be a function")
-	return next(before)
-}
-
-Number.prototype.pipe = function() {
-	const before = this //a number
-	const next = arguments[0] // a function
-	if (typeof next !== "function") return new Error("The argument given to pipe() must be a function")
-	return next(before)
-}
-
-Object.prototype.pipe = function() {
-	const before = this //an object
-	const next = arguments[0] // a function
-	if (typeof next !== "function") return new Error("The argument given to pipe() must be a function")
-	if (before instanceof Set) return [...before].pipe(next)
-	else if (before instanceof Map) return mapToObject(before).pipe(next)
-	return next(before)
-}
-
 Object.prototype.reach = function() {
 	const object = Object.assign({}, this)
 	const args = [...arguments]
 	let path = args[0]
-	const undefinedValue = (args[1] === undefined) ?  undefined : args[1]
+	const undefinedValue = args[1] === undefined ? undefined : args[1]
 	if (!path) return new Error(".reach() needs a single parameter that could be a String or Array")
 	if (typeof path !== "string" && !Array.isArray(path))
 		return new Error("The parameter supplied as the first argument to .reach() must be an Array or a String")
@@ -92,7 +49,7 @@ Array.prototype.reach = function() {
 
 	function search(path, input = object) {
 		if (input[path[0]] === undefined) return undefinedValue
-		else if (path.length === 1 && input[path[0]]  !== undefined) return input[path[0]]
+		else if (path.length === 1 && input[path[0]] !== undefined) return input[path[0]]
 
 		input = input[path[0]]
 		return search(path.slice(1), input)
@@ -100,9 +57,9 @@ Array.prototype.reach = function() {
 	return search(path)
 }
 
-f.reach =  function(data , path, undefinedValue) {
-	if(Array.isArray(data) || typeof data === "object") return data.reach(path, undefinedValue)
-		else return new Error("The first argument for f.reach() must be an array or object.")
+f.reach = function(data, path, undefinedValue) {
+	if (Array.isArray(data) || typeof data === "object") return data.reach(path, undefinedValue)
+	else return new Error("The first argument for f.reach() must be an array or object.")
 }
 
 function mapToObject(map) {
@@ -129,7 +86,7 @@ f.flatten = function(array) {
 
 f.pipe = function() {
 	let args = [...arguments]
-	if (args.length === 1 &&  Array.isArray(args[0])) args = f.flatten([...arguments])
+	if (args.length === 1 && Array.isArray(args[0])) args = f.flatten([...arguments])
 
 	if (typeof args[0] === "function") {
 		return function() {
@@ -155,7 +112,7 @@ f.identity = function() {
 }
 
 f.curry = function(fn) {
-	if(typeof fn !== "function") return new Error("The argument passed to f.curry() must be a function.")
+	if (typeof fn !== "function") return new Error("The argument passed to f.curry() must be a function.")
 	if (fn.length < 2) return fn
 	const curry = {}
 	curry.args = []
@@ -170,22 +127,37 @@ f.curry = function(fn) {
 	}
 }
 
+function createKey(arr) {
+	if (arr.length === 0) return ">>>No argument<<<"
+	arr = arr.map(item => {
+		if (item === undefined) return ">>>undefined<<<"
+		else if (item === null) return ">>>null<<<"
+		else if (Array.isArray(item)) return Object.entries(createKey(item)).join("*&$%")
+		else if (item instanceof Set) return "s&E&&t" + createKey([...item]) + "s&E&&t"
+		else if (item instanceof Map) return "m**A$%p" + createKey([...item]) + "m**A$%p"
+		else if (typeof item === "object") return "_^&##" + Object.entries(item).join("_^&##") + "_^&##"
+		else if(typeof item === "string") return ")))" + item + "((("
+		else return item
+	})
+	return arr.join("#%&@^#")
+}
+
 f.memoize = function(fn) {
-	if(typeof fn !== "function") return new Error("The argument passed to f.memoize() must be a function.")
+	if (typeof fn !== "function") return new Error("The argument passed to f.memoize() must be a function.")
 	if (!fn._cache) fn._cache = {}
 
 	return function(arg) {
-		const key = [...arguments].join("#%&@^#")
+		const key = createKey([...arguments])
 		fn._cache[key] = fn._cache[key] || fn.apply(undefined, arguments)
 		return fn._cache[key]
 	}
 }
 
 f.memoizeX = function(fn) {
-	if(typeof fn !== "function") return new Error("The argument passed to f.memoizeX() must be a function.")
+	if (typeof fn !== "function") return new Error("The argument passed to f.memoizeX() must be a function.")
 	const cache = {}
 	return function() {
-		const key = [...arguments].join("#%&@^#")
+		const key = createKey([...arguments])
 		if (cache[key]) return cache[key]
 		cache[key] = fn.apply(undefined, arguments)
 		return cache[key]
@@ -196,7 +168,7 @@ Function.prototype.memoize = function() {
 	const _cache = {}
 	const fn = this
 	return function() {
-		const key = [...arguments].join("#%&@^#")
+		const key = createKey([...arguments])
 		if (_cache[key]) return _cache[key]
 		_cache[key] = fn.apply(undefined, arguments)
 		return _cache[key]
