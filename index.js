@@ -1,13 +1,10 @@
 const f = {}
 
-Object.prototype.reach = function() {
-	const object = Object.assign({}, this)
-	const args = [...arguments]
-	let path = args[0]
-	const undefinedValue = args[1] === undefined ? undefined : args[1]
-	if (!path) return new Error(".reach() needs a single parameter that could be a String or Array")
+const reach4Objects = function(object, path, undefinedValue = undefined) {
+	if (!path)
+		return new Error("f.reach() needs a path argument as second parameter that could be a String or Array")
 	if (typeof path !== "string" && !Array.isArray(path))
-		return new Error("The parameter supplied as the first argument to .reach() must be an Array or a String")
+		return new Error("f.reach() needs a path argument as second parameter that could be a String or Array")
 	if (typeof path === "string") {
 		path = path.split(/\[|\]/g) // now an array
 
@@ -29,14 +26,11 @@ Object.prototype.reach = function() {
 	return search(path)
 }
 
-Array.prototype.reach = function() {
-	const object = [...this]
-	const args = [...arguments]
-	let path = args[0]
-	const undefinedValue = args[1] || undefined
-	if (!path) return new Error(".reach() needs a single parameter that could be a String or Array")
+const reach4Arrays = function(object, path, undefinedValue = undefined) {
+	if (!path)
+		return new Error("f.reach() needs a path argument as second parameter that could be a String or Array")
 	if (typeof path !== "string" && !Array.isArray(path))
-		return new Error("The parameter supplied as the first argument to .reach() must be an Array or a String")
+		return new Error("f.reach() needs a path argument as second parameter that could be a String or Array")
 	if (typeof path === "string") {
 		path = path.split(/\[|\]/g) // now an array
 		path = path.reduce((a, item) => {
@@ -58,7 +52,8 @@ Array.prototype.reach = function() {
 }
 
 f.reach = function(data, path, undefinedValue) {
-	if (Array.isArray(data) || typeof data === "object") return data.reach(path, undefinedValue)
+	if (Array.isArray(data)) return reach4Arrays(data, path, undefinedValue)
+	else if (typeof data === "object") return reach4Objects(data, path, undefinedValue)
 	else return new Error("The first argument for f.reach() must be an array or object.")
 }
 
@@ -129,14 +124,14 @@ f.curry = function(fn) {
 
 function createKey(arr) {
 	if (arr.length === 0) return ">>>No argument<<<"
-	arr = arr.map(item => {
+	arr = arr.map((item) => {
 		if (item === undefined) return ">>>undefined<<<"
 		else if (item === null) return ">>>null<<<"
 		else if (Array.isArray(item)) return Object.entries(createKey(item)).join("*&$%")
 		else if (item instanceof Set) return "s&E&&t" + createKey([...item]) + "s&E&&t"
 		else if (item instanceof Map) return "m**A$%p" + createKey([...item]) + "m**A$%p"
 		else if (typeof item === "object") return "_^&##" + Object.entries(item).join("_^&##") + "_^&##"
-		else if(typeof item === "string") return ")))" + item + "((("
+		else if (typeof item === "string") return ")))" + item + "((("
 		else return item
 	})
 	return arr.join("#%&@^#")
