@@ -272,4 +272,8 @@ console.log(f.reach( object, "a[0]['a.0']" )) // { b: 17 }
 console.log(f.reach( object, "a[0][1].b" )) //undefined
 
 console.log(f.reach( object, "a[0][1].b" , null)) // null
+
+// TIP: if you are not even sure that the first argument to reach existes or not, use this approach:
+const maybeObject = undefined
+console.log( reach(maybeObject || {} , "a.path" , "a value for undefined" ) ) // "a value for undefined" 
 ```
